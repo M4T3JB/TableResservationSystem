@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
     <title>Add Reservation</title>
     <link
@@ -15,12 +15,14 @@
 
 <div class="container mt-4">
     <h2>Add Reservation</h2>
-    <form th:action="@{/employee/saveReservation}" method="post">
+    <form th:action="@{/client/saveReservation}" method="post">
         <div class="mb-3">
-            <label for="tableNumber" class="form-label">Table Number</label>
-            <input type="number" class="form-control" id="tableNumber" name="tableNumber" required>
+            <label for="tableId" class="form-label">Table Number</label>
+            <input type="number" class="form-control" id="tableId" name="tableId" required>
             <label for="reservationTime" class="form-label">Reservation Time</label>
-            <input type="datetime-local" class="form-control" id="reservationTime" name="reservationTime" required>
+            <input type="time" class="form-control" id="reservationTime" name="reservationTime" required>
+            <label for="reservationDate" class="form-label">Reservation Date</label>
+            <input type="date" class="form-control" id="reservationDate" name="reservationDate" required>
         </div>
         <button type="submit" class="btn btn-primary">Add Reservation</button>
     </form>

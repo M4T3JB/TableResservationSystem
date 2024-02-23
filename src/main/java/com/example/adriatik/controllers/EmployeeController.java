@@ -1,19 +1,19 @@
 package com.example.adriatik.controllers;
 
 import com.example.adriatik.dto.ReservationPayload;
+
 import com.example.adriatik.entities.*;
-import com.example.adriatik.repositories.ProgramRepository;
+
 import com.example.adriatik.repositories.UserRepository;
 import com.example.adriatik.services.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.text.ParseException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -22,23 +22,21 @@ import java.util.List;
 public class EmployeeController {
     private final ReservationService reservationService;
 
-    private final UserRepository userRepository;
 
-    private final SetReservationService setReservationService;
-    private final ProgramRepository programRepository;
+
+
+
+
 
 
     @Autowired
-    public EmployeeController(ReservationService reservationService, ClientRequestService clientRequestService,
-                              UserRepository userRepository, ProgramService programService,
-                              SetReservationService setReservationService, ProgramRepository programRepository
+    public EmployeeController(ReservationService reservationService
+
     ) {
         this.reservationService = reservationService;
 
-        this.userRepository = userRepository;
 
-        this.setReservationService = setReservationService;
-        this.programRepository = programRepository;
+
 
     }
 
@@ -60,19 +58,19 @@ public class EmployeeController {
         model.addAttribute("reservation", new Reservation());
         return "reservation/addReservationForm";
     }
-
     @PreAuthorize("hasAnyAuthority('EMPLOYEE')")
-    @PostMapping("saveReservation")
+    @PostMapping("/saveReservation")
     public String saveReservation(@ModelAttribute ReservationPayload reservationPayload, RedirectAttributes redirectAttributes) throws ParseException {
-        boolean reservationExists = reservationService.existsByNumber(reservationPayload.getTableNumber());
-        if (reservationExists) {
-            redirectAttributes.addFlashAttribute("error", "Reservation with the same name already exists");
+        Reservation reservation = reservationService.addReservation(reservationPayload);
+        if (reservation != null) {
+            redirectAttributes.addFlashAttribute("success", "Reservation saved successfully!");
+            return "redirect:/employee/reservationSuccess";
+        } else {
+            redirectAttributes.addFlashAttribute("error", "Failed to save reservation. Please try again.");
             return "redirect:/employee/addReservation";
         }
-
-        reservationService.addReservation(reservationPayload);
-        return "redirect:/employee/reservationSuccess";
     }
+
 
     @PreAuthorize("hasAnyAuthority('EMPLOYEE')")
     @GetMapping("showAllReservations")
@@ -93,10 +91,22 @@ public class EmployeeController {
     }
 
     @GetMapping("/editReservationForm/{id}")
-    public String editReservationForm(@PathVariable Integer id, Model model) {
-        Reservation reservation = reservationService.findById(id);
-        model.addAttribute("reservation", reservation);
-        return "reservation/editReservation";
+    public String editReservationForm(@PathVariable("id") Integer id, @ModelAttribute("reservationPayload") ReservationPayload reservationPayload, Model model) {
+        try {
+            Reservation reservation = reservationService.findById(id);
+            reservationPayload.setId(reservation.getId());
+            reservationPayload.setUserId(reservation.getUser().getId());
+            reservationPayload.setTableId(reservation.getTable().getId());
+            reservationPayload.setReservationDate(reservation.getReservationDate());
+            reservationPayload.setReservationTime(reservation.getReservationTime());
+            // Add other reservation fields here
+
+            model.addAttribute("reservationPayload", reservationPayload);
+
+            return "reservation/editReservation";
+        } catch (EntityNotFoundException e) {
+            return "error/reservationNotFound";
+        }
     }
 
     @PreAuthorize("hasAnyAuthority('EMPLOYEE')")
@@ -108,18 +118,5 @@ public class EmployeeController {
     }
 
 
-    @PreAuthorize("hasAnyAuthority('EMPLOYEE')")
-    @PostMapping("/addSetReservation")
-    public String addSetReservation(@RequestParam Integer selectedReservationId, @RequestParam LocalDateTime reservationTime, @RequestParam Integer reservationCount, @RequestParam Integer userId, @RequestParam Integer programId) {
-        SetReservation setReservation = new SetReservation();
-        setReservation.setId(selectedReservationId);
-        setReservation.setTableNumber(reservationCount);
-        User user = userRepository.findById(userId).orElse(null);
-        setReservation.setUser(user);
-        Program program = programRepository.findById(programId).orElse(null);
-        setReservation.setReservationTime(reservationTime);
-        setReservation.setProgram(program);
-        setReservationService.addSetReservation(setReservation);
-        return "redirect:/employee/writeProgram/" + program.getClient().getId() + "/" + program.getEmployee().getId();
-    }
+
 }

@@ -2,10 +2,7 @@ package com.example.adriatik.controllers;
 
 
 import com.example.adriatik.entities.User;
-import com.example.adriatik.repositories.RoleRepository;
-import com.example.adriatik.repositories.UserRepository;
 import com.example.adriatik.services.AdminService;
-import com.example.adriatik.services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,17 +15,11 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminController {
     private final AdminService adminService;
-    private final UserService userService;
 
-    private final UserRepository userRepository;
 
-    private final RoleRepository roleRepository;
-
-    public AdminController(AdminService adminService, UserRepository userRepository, RoleRepository roleRepository, UserService userService) {
+    public AdminController(AdminService adminService) {
         this.adminService = adminService;
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.userService = userService;
+
     }
 
     @GetMapping()

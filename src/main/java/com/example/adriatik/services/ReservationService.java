@@ -8,11 +8,14 @@ import java.util.List;
 
 public interface ReservationService {
     Reservation addReservation(ReservationPayload reservationPayload) throws ParseException;
-    Reservation findByTableNumber(Integer tableNumber);
-    List<Reservation> findAll();
-    boolean existsByNumber(Integer tableNumber);
+    
     boolean deleteReservationById(Integer id);
-    Reservation editReservation(Integer id, ReservationPayload reservationPayload);
-    Reservation findById(Integer id);
+
     List<Reservation> findAllReservationsOrderedByIdAsc();
+
+    Reservation findById(Integer id);
+
+    List<Reservation> findAllReservationsByUser(String username);
+
+    void editReservation(Integer id, ReservationPayload reservationPayload);
 }

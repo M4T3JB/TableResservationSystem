@@ -4,8 +4,9 @@ package com.example.adriatik.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Data
@@ -16,22 +17,20 @@ public class Reservation {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "tableNumber", nullable = false)
-    @NotNull(message = "Value cant be null")
-    private int tableNumber;
-
-    @Column(name = "tableCapacity", nullable = false)
-    @NotNull(message = "Value cant be null")
-    private int tableCapacity;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
-    @NotNull(message = "Value cant be null")
     private User user;
 
-    @Column(name = "reservation_time", nullable = false)
-    @NotNull(message = "Value cant be null")
-    private LocalDateTime reservationTime;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "table_id", nullable = false)
+    private Tables table;
+
+    @Column(name = "time", nullable = false)
+    private LocalTime reservationTime;
+
+    @Column(name = "date", nullable = false)
+    private LocalDate reservationDate;
+
 
 
 }

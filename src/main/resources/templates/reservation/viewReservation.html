@@ -37,17 +37,14 @@
             <td th:text="${reservation.table.getId()}"></td>
             <td th:text="${reservation.reservationTime}"></td>
             <td th:text="${reservation.reservationDate}"></td>
-            <td><form th:action="@{/employee/editReservationForm/{id}(id=${reservation.id})}" method="get">
-                <button type="submit" class="btn btn-danger">Edit</button>
-            </form>
-            </td>
-            <td><form th:action="@{/employee/deleteReservation/{id}(id=${reservation.id})}" th:object="${reservation}" method="post">
+
+            <td><form th:action="@{/client/deleteReservation/{id}(id=${reservation.id})}" th:object="${reservation}" method="post">
                 <button type="submit" class="btn btn-danger">Delete</button>
             </form></td>
         </tr>
         </tbody>
     </table>
-    <a class="btn btn-secondary" href="/employee">Back to Home</a>
+    <a class="btn btn-secondary" href="/client">Back to Home</a>
 </div>
 <div class="container mt-5">
     <div th:if="${deleteSuccess}" class="alert alert-success" role="alert">
