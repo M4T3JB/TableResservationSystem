@@ -3,6 +3,7 @@ package com.example.adriatik.repositories;
 
 
 import com.example.adriatik.entities.Reservation;
+import com.example.adriatik.entities.ReservationTime;
 import com.example.adriatik.entities.Tables;
 import com.example.adriatik.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +16,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
 
 
     List<Reservation> findAll();
-    boolean existsByTableAndReservationTime(Tables table, LocalTime reservationTime);
+    boolean existsByTableAndReservationTime(Tables table, ReservationTime reservationTime);
 
 
     List<Reservation> findAllByOrderByIdAsc();

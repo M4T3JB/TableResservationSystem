@@ -98,7 +98,7 @@ public class EmployeeController {
             reservationPayload.setUserId(reservation.getUser().getId());
             reservationPayload.setTableId(reservation.getTable().getId());
             reservationPayload.setReservationDate(reservation.getReservationDate());
-            reservationPayload.setReservationTime(reservation.getReservationTime());
+            reservationPayload.setReservationTime(reservation.getReservationTime().getId());
             // Add other reservation fields here
 
             model.addAttribute("reservationPayload", reservationPayload);

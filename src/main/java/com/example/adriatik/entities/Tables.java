@@ -11,7 +11,6 @@ public class Tables {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
-
     @Column(name = "capacity")
     private Integer capacity;
 }

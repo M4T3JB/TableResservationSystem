@@ -18,11 +18,16 @@
     <form th:action="@{/client/saveReservation}" method="post">
         <div class="mb-3">
             <label for="tableId" class="form-label">Table Number</label>
-            <input type="number" class="form-control" id="tableId" name="tableId" required>
+            <select class="form-control" id="tableId" name="tableId" required>
+                <option th:each="table : ${tables}" th:value="${table.id}" th:text="${'Table ' + table.id + ', capacity ' + table.capacity}"></option>
+            </select>
             <label for="reservationTime" class="form-label">Reservation Time</label>
-            <input type="time" class="form-control" id="reservationTime" name="reservationTime" required>
+            <select class="form-control" id="reservationTime" name="reservationTime" required>
+                <option th:each="time : ${reservationTimes}" th:value="${time.id}" th:text="${time.time}"></option>
+            </select>
             <label for="reservationDate" class="form-label">Reservation Date</label>
             <input type="date" class="form-control" id="reservationDate" name="reservationDate" required>
+
         </div>
         <button type="submit" class="btn btn-primary">Add Reservation</button>
     </form>

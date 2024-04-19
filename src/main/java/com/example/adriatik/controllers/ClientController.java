@@ -3,9 +3,12 @@ package com.example.adriatik.controllers;
 
 
 import com.example.adriatik.dto.ReservationPayload;
+import com.example.adriatik.repositories.ReservationTimeRepository;
+import com.example.adriatik.repositories.TablesRepository;
 import com.example.adriatik.services.ReservationService;
 import com.example.adriatik.entities.*;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +26,12 @@ public class ClientController {
 
     private final ReservationService reservationService;
 
+    @Autowired
+    private TablesRepository tablesRepository;
+
+
+    @Autowired
+    private ReservationTimeRepository reservationTimeRepository;
 
     public ClientController(ReservationService reservationService) {
 
@@ -43,7 +52,10 @@ public class ClientController {
 
     @GetMapping("addReservation")
     public String showAddReservationForm(Model model) {
-        model.addAttribute("reservation", new Reservation());
+        List<ReservationTime> reservationTimes = reservationTimeRepository.findAll();
+        List<Tables> tables = tablesRepository.findAll();
+        model.addAttribute("reservationTimes", reservationTimes);
+        model.addAttribute("tables", tables);
         return "reservation/addReservationForm";
     }
 

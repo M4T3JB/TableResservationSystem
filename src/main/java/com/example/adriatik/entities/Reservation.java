@@ -6,7 +6,7 @@ import lombok.Data;
 
 
 import java.time.LocalDate;
-import java.time.LocalTime;
+
 
 @Entity
 @Data
@@ -25,8 +25,9 @@ public class Reservation {
     @JoinColumn(name = "table_id", nullable = false)
     private Tables table;
 
-    @Column(name = "time", nullable = false)
-    private LocalTime reservationTime;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "time_id", nullable = false)
+    private ReservationTime reservationTime;
 
     @Column(name = "date", nullable = false)
     private LocalDate reservationDate;

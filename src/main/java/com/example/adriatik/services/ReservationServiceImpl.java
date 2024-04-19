@@ -4,7 +4,9 @@ import com.example.adriatik.dto.ReservationPayload;
 import com.example.adriatik.entities.Reservation;
 import com.example.adriatik.entities.Tables;
 import com.example.adriatik.entities.User;
+import com.example.adriatik.entities.ReservationTime;
 import com.example.adriatik.repositories.ReservationRepository;
+import com.example.adriatik.repositories.ReservationTimeRepository;
 import com.example.adriatik.repositories.TablesRepository;
 import com.example.adriatik.repositories.UserRepository;
 
@@ -22,10 +24,13 @@ public class ReservationServiceImpl implements ReservationService {
     private final TablesRepository tablesRepository;
     private final UserRepository userRepository;
 
-    public ReservationServiceImpl(ReservationRepository reservationRepository, TablesRepository tablesRepository, UserRepository userRepository) {
+    private final ReservationTimeRepository reservationTimeRepository;
+
+    public ReservationServiceImpl(ReservationRepository reservationRepository, TablesRepository tablesRepository, UserRepository userRepository, ReservationTimeRepository reservationTimeRepository) {
         this.reservationRepository = reservationRepository;
         this.tablesRepository = tablesRepository;
         this.userRepository = userRepository;
+        this.reservationTimeRepository = reservationTimeRepository;
     }
 
     public Reservation addReservation(ReservationPayload reservationPayload) throws ParseException {
@@ -33,7 +38,10 @@ public class ReservationServiceImpl implements ReservationService {
         Tables table = tablesRepository.findById(reservationPayload.getTableId())
                 .orElseThrow(() -> new IllegalArgumentException("No table found with id: " + reservationPayload.getTableId()));
 
-        if (reservationRepository.existsByTableAndReservationTime(table, reservationPayload.getReservationTime())) {
+        ReservationTime reservationTime = reservationTimeRepository.findById(reservationPayload.getReservationTime())
+                .orElseThrow(() -> new IllegalArgumentException("No reservation time found with id: " + reservationPayload.getReservationTime()));
+
+        if (reservationRepository.existsByTableAndReservationTime(table, reservationTime)) {
             throw new IllegalArgumentException("Table is already reserved at the chosen time.");
         }
 
@@ -44,7 +52,7 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = new Reservation();
         reservation.setTable(table);
         reservation.setUser(user);
-        reservation.setReservationTime(reservationPayload.getReservationTime());
+        reservation.setReservationTime(reservationTime);
         reservation.setReservationDate(reservationPayload.getReservationDate());
 
         return reservationRepository.save(reservation);
@@ -86,12 +94,15 @@ public class ReservationServiceImpl implements ReservationService {
         Tables table = tablesRepository.findById(reservationPayload.getTableId())
                 .orElseThrow(() -> new IllegalArgumentException("No table found with id: " + reservationPayload.getTableId()));
 
-        if (reservationRepository.existsByTableAndReservationTime(table, reservationPayload.getReservationTime())) {
+        ReservationTime reservationTime = reservationTimeRepository.findById(reservationPayload.getReservationTime())
+                .orElseThrow(() -> new IllegalArgumentException("No reservation time found with id: " + reservationPayload.getReservationTime()));
+
+        if (reservationRepository.existsByTableAndReservationTime(table, reservationTime)) {
             throw new IllegalArgumentException("Table is already reserved at the chosen time.");
         }
 
         reservation.setTable(table);
-        reservation.setReservationTime(reservationPayload.getReservationTime());
+        reservation.setReservationTime(reservationTime);
         reservation.setReservationDate(reservationPayload.getReservationDate());
 
         reservationRepository.save(reservation);
