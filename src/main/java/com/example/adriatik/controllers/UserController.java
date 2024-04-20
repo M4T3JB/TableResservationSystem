@@ -32,13 +32,14 @@ public class UserController {
     public String addUserForm(Model model) {
         try {
             var roles = roleRepository.findAll();
-            roles.remove(0);
+            roles.removeFirst();
             model.addAttribute("roleOptions", roles);
             model.addAttribute("userPayload", new UserPayload());
             return "user/addUserForm";
         } catch (SecurityException e) {
             return "error/unauthorized";
         } catch (Exception e) {
+
             return "error/internalServerError";
         }
     }

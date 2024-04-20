@@ -12,28 +12,28 @@
 
 <h1>Registration</h1>
 <form th:action="@{/user/addUser}" th:object="${userPayload}" method="post">
-    <input type="hidden" th:field="*{id}" />
+    <input type="hidden"  th:field="*{id}" />
 
     <label for="username">Username:</label>
-    <input type="text" th:field="*{username}" /><br><br>
+    <input type="text" id="username" th:field="*{username}" /><br><br>
 
     <label for="firstname">First Name:</label>
-    <input type="text" th:field="*{firstname}" /><br><br>
+    <input type="text" id="firstname" th:field="*{firstname}" /><br><br>
 
     <label for="lastname">Last Name:</label>
-    <input type="text" th:field="*{lastname}" /><br><br>
+    <input type="text" id="lastname" th:field="*{lastname}" /><br><br>
 
     <label for="email">Email:</label>
-    <input type="email" th:field="*{email}" /><br><br>
+    <input type="email" id="email" th:field="*{email}" /><br><br>
 
     <label for="password">Password:</label>
-    <input type="password" th:field="*{password}" /><br><br>
+    <input type="password" id="password" th:field="*{password}" /><br><br>
 
     <label for="dateOfBirth">Date of Birth:</label>
-    <input type="date" th:field="*{dateOfBirth}" /><br><br>
+    <input type="date" id="dateOfBirth" th:field="*{dateOfBirth}" /><br><br>
 
     <label for="userRole">User Role:</label>
-    <select class="form-select" id="role" th:field="*{userRole}">
+    <select class="form-select" id="userRole" th:field="*{userRole}">
         <option th:each="option: ${roleOptions}"
                 th:text="${option.name}" th:value="${option.name}"
         ></option>

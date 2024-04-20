@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -70,6 +71,12 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<Reservation> findAllReservationsOrderedByIdAsc() {
         return reservationRepository.findAllByOrderByIdAsc();
+    }
+
+    public List<Reservation> findReservationsByTableAndDate(Integer tableId, LocalDate date) {
+        Tables table = new Tables();
+        table.setId(tableId);
+        return reservationRepository.findByTableAndReservationDate(table, date);
     }
 
 

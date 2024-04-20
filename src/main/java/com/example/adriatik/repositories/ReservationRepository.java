@@ -9,6 +9,7 @@ import com.example.adriatik.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -25,4 +26,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
 
     boolean existsById(Integer id);
 
+    List<Reservation> findByTableAndReservationDate(Tables table, LocalDate date);
 }

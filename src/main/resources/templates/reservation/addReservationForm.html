@@ -35,5 +35,50 @@
 <div th:if="${error}" class="alert alert-danger" role="alert">
     <p th:text="${error}"></p>
 </div>
+<script>
+    var today = new Date();
+    var tenDaysLater = new Date();
+    tenDaysLater.setDate(today.getDate() + 10);
+
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+
+    today = yyyy + '-' + mm + '-' + dd;
+
+    dd = String(tenDaysLater.getDate()).padStart(2, '0');
+    mm = String(tenDaysLater.getMonth() + 1).padStart(2, '0'); //January is 0!
+    yyyy = tenDaysLater.getFullYear();
+
+    tenDaysLater = yyyy + '-' + mm + '-' + dd;
+
+    document.getElementById("reservationDate").setAttribute("min", today);
+    document.getElementById("reservationDate").setAttribute("max", tenDaysLater);
+</script>
+
+<script>
+    // Event listener for changes to the table or date fields
+    document.getElementById('tableId').addEventListener('change', updateTimes);
+    document.getElementById('reservationDate').addEventListener('change', updateTimes);
+
+    function updateTimes() {
+        var tableId = document.getElementById('tableId').value;
+        var date = document.getElementById('reservationDate').value;
+
+        // Send AJAX request to server
+        fetch('/client/getReservedTimes?tableId=' + tableId + '&date=' + date)
+            .then(response => response.json())
+            .then(data => {
+                // Loop through all time options
+                var timeOptions = document.getElementById('reservationTime').options;
+                for (var i = 0; i < timeOptions.length; i++) {
+                    var option = timeOptions[i];
+
+                    // If the time is in the response data, disable the option
+                    option.disabled = !!data.includes(option.value);
+                }
+            });
+    }
+</script>
 </body>
 </html>

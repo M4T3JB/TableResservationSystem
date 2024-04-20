@@ -14,10 +14,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import java.time.LocalDate;
+import org.springframework.format.annotation.DateTimeFormat;
 import java.security.Principal;
 import java.text.ParseException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/client")
@@ -87,6 +89,18 @@ public class ClientController {
         List<Reservation> reservations = reservationService.findAllReservationsByUser(username);
         model.addAttribute("reservations", reservations);
         return "reservation/viewReservation";
+    }
+
+    @GetMapping("/getReservedTimes")
+    @ResponseBody
+    public List<String> getReservedTimes(@RequestParam("tableId") Integer tableId, @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        // Query the database for reservations for the selected table and date
+        List<Reservation> reservations = reservationService.findReservationsByTableAndDate(tableId, date);
+
+        // Extract the times from the reservations and return them
+        return reservations.stream()
+                .map(reservation -> reservation.getReservationTime().getTime())
+                .collect(Collectors.toList());
     }
 
 
