@@ -1,6 +1,102 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
+    <style>
+        /* CSS for the restaurant layout */
+        .restaurant {
+            position: relative;
+            width: 800px; /* Adjust this width according to your layout */
+            height: 600px; /* Adjust this height according to your layout */
+            border: 2px solid #ccc;
+            margin: 50px auto;
+        }
+        .house{
+            position:absolute;
+            text-align: center;
+            font-size: 16px;
+            border: 2px solid #000;
+            width: 295px;
+            height: 140px;
+            top: 50px;
+            left: 100px;
+            line-height: 140px;
+        }
+        .table_small {
+            position: absolute;
+            text-align: center;
+            font-size: 16px;
+            width: 80px;
+            height: 80px;
+            border: 2px solid #000;
+            line-height: 60px;
+            background-color: #ccc;
+            cursor: pointer;
+        }
+        .table_large {
+            position: absolute;
+            text-align: center;
+            font-size: 16px;
+            width: 80px;
+            height: 160px;
+            border: 2px solid #000;
+            line-height: 60px;
+            background-color: #ccc;
+
+            cursor: pointer;
+        }
+        .table_small.reserved, .table_large.reserved {
+            background-color: red;
+        }
+        option.crossed {
+            text-decoration: line-through;
+            pointer-events: none;
+        }
+        /* Define styles for large tables */
+
+        /* Define specific positions for tables */
+        #table1 {
+            top: 400px;
+            left: 100px;
+        }
+        #table2 {
+            top: 400px;
+            left: 300px;
+        }
+        #table3 {
+            top: 400px;
+            left: 400px;
+        }
+        #table4 {
+            top: 400px;
+            left: 500px;
+        }
+        #table5 {
+            top: 210px;
+            left: 500px;
+        }
+        #table6 {
+            top: 100px;
+            left: 400px;
+        }
+        #table7 {
+            top: 100px;
+            left: 500px;
+        }
+        .sea {
+            position: relative;
+            height: 100%;
+            width:  100px;
+            background: dodgerblue;
+            left: 700px;
+            text-align: center;
+            font-size: 16px;
+            line-height: 600px;
+        }
+
+
+
+        /* Add more table positions as needed */
+    </style>
     <title>Add Reservation</title>
     <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
@@ -35,6 +131,20 @@
 <div th:if="${error}" class="alert alert-danger" role="alert">
     <p th:text="${error}"></p>
 </div>
+<div class="restaurant">
+    <!-- Tables -->
+    <div id="table1" class="table_large">1</div>
+    <div id="table2" class="table_large">2</div>
+    <div id="table3" class="table_small">3</div>
+    <div id="table4" class="table_small">4</div>
+    <div id="table5" class="table_large">5</div>
+    <div id="table6" class="table_small">6</div>
+    <div id="table7" class="table_small">7</div>
+    <div class="house">Restaurant</div>
+
+    <!-- Add more tables here -->
+</div>
+
 <script>
     var today = new Date();
     var tenDaysLater = new Date();
@@ -58,27 +168,67 @@
 
 <script>
     // Event listener for changes to the table or date fields
-    document.getElementById('tableId').addEventListener('change', updateTimes);
+
     document.getElementById('reservationDate').addEventListener('change', updateTimes);
+    document.getElementById('reservationTime').addEventListener('change', updateTimes);
 
     function updateTimes() {
-        var tableId = document.getElementById('tableId').value;
         var date = document.getElementById('reservationDate').value;
+        var time = document.getElementById('reservationTime').value;
 
-        // Send AJAX request to server
-        fetch('/client/getReservedTimes?tableId=' + tableId + '&date=' + date)
+        fetch('/client/getReservedTables?date=' + date + '&time=' + time)
             .then(response => response.json())
             .then(data => {
-                // Loop through all time options
-                var timeOptions = document.getElementById('reservationTime').options;
-                for (var i = 0; i < timeOptions.length; i++) {
-                    var option = timeOptions[i];
+                var reservedTables = data.reservedTables.map(table => table.id.toString());
 
-                    // If the time is in the response data, disable the option
-                    option.disabled = !!data.includes(option.value);
-                }
+                var tables = document.querySelectorAll('.table_small, .table_large');
+                tables.forEach(function(table) {
+                    if (reservedTables.includes(table.textContent.trim())) {
+                        table.classList.add('reserved');
+                    } else {
+                        table.classList.remove('reserved');
+                    }
+                });
             });
+
     }
+</script>
+
+<script>
+    // Get all the tables
+    // Get all the tables
+    var tables = document.querySelectorAll('.table_small, .table_large');
+
+    // Get the select dropdown
+    var selectDropdown = document.getElementById('tableId');
+
+    // Variable to keep track of the previously clicked table
+    var previousTable = null;
+
+    // Loop through each table
+    tables.forEach(function(table) {
+        // Add a click event listener to the table
+        table.addEventListener('click', function() {
+            // If the table is reserved, do nothing and return
+            if (this.classList.contains('reserved')) {
+                return;
+            }
+
+            // If there was a previously clicked table, reset its color
+            if (previousTable) {
+                previousTable.style.backgroundColor = '#ccc'; // Original color
+            }
+
+            // Change the table's color to green
+            this.style.backgroundColor = 'green';
+
+            // Select the corresponding option in the select dropdown
+            selectDropdown.value = this.textContent.trim();
+
+            // Update the previously clicked table
+            previousTable = this;
+        });
+    });
 </script>
 </body>
 </html>

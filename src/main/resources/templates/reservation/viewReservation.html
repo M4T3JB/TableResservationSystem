@@ -35,7 +35,7 @@
         <tr th:each="reservation : ${reservations}">
             <td th:text="${reservation.user.getUsername()}"></td>
             <td th:text="${reservation.table.getId()}"></td>
-            <td th:text="${reservation.reservationTime}"></td>
+            <td th:text="${reservation.reservationTime.getTime()}"></td>
             <td th:text="${reservation.reservationDate}"></td>
 
             <td><form th:action="@{/client/deleteReservation/{id}(id=${reservation.id})}" th:object="${reservation}" method="post">

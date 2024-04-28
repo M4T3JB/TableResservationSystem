@@ -17,7 +17,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
 
 
     List<Reservation> findAll();
-    boolean existsByTableAndReservationTime(Tables table, ReservationTime reservationTime);
+    boolean existsByTableAndReservationTimeAndReservationDate(Tables table, ReservationTime reservationTime, LocalDate date);
 
 
     List<Reservation> findAllByOrderByIdAsc();
@@ -27,4 +27,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
     boolean existsById(Integer id);
 
     List<Reservation> findByTableAndReservationDate(Tables table, LocalDate date);
-}
+
+    List<Reservation> findByReservationDateAndReservationTime( LocalDate reservationDate, ReservationTime reservationTime);
+    }

@@ -4,6 +4,8 @@ import com.example.adriatik.dto.ReservationPayload;
 
 import com.example.adriatik.entities.*;
 
+import com.example.adriatik.repositories.ReservationTimeRepository;
+import com.example.adriatik.repositories.TablesRepository;
 import com.example.adriatik.repositories.UserRepository;
 import com.example.adriatik.services.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,6 +23,15 @@ import java.util.List;
 @RequestMapping("/employee")
 public class EmployeeController {
     private final ReservationService reservationService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TablesRepository tablesRepository;
+
+    @Autowired
+    private ReservationTimeRepository reservationTimeRepository;
 
 
 
@@ -92,14 +103,27 @@ public class EmployeeController {
 
     @GetMapping("/editReservationForm/{id}")
     public String editReservationForm(@PathVariable("id") Integer id, @ModelAttribute("reservationPayload") ReservationPayload reservationPayload, Model model) {
+
         try {
             Reservation reservation = reservationService.findById(id);
             reservationPayload.setId(reservation.getId());
             reservationPayload.setUserId(reservation.getUser().getId());
             reservationPayload.setTableId(reservation.getTable().getId());
             reservationPayload.setReservationDate(reservation.getReservationDate());
-            reservationPayload.setReservationTime(reservation.getReservationTime().getId());
+            reservationPayload.setReservationTime(String.valueOf(reservation.getReservationTime().getId()));
             // Add other reservation fields here
+
+            // Fetch the necessary data
+            List<User> users = userRepository.findAll();
+            List<Tables> tables = tablesRepository.findAll();
+            List<ReservationTime> reservationTimes = reservationTimeRepository.findAll();
+            User user = userRepository.findById(reservationPayload.getUserId()).orElseThrow(EntityNotFoundException::new);
+            model.addAttribute("user", user);
+
+            // Add the data to the model
+            model.addAttribute("users", users);
+            model.addAttribute("tables", tables);
+            model.addAttribute("reservationTimes", reservationTimes);
 
             model.addAttribute("reservationPayload", reservationPayload);
 

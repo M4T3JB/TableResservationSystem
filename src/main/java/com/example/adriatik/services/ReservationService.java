@@ -2,6 +2,7 @@ package com.example.adriatik.services;
 
 import com.example.adriatik.dto.ReservationPayload;
 import com.example.adriatik.entities.Reservation;
+import com.example.adriatik.entities.ReservationTime;
 
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -21,4 +22,6 @@ public interface ReservationService {
     void editReservation(Integer id, ReservationPayload reservationPayload);
 
     List<Reservation> findReservationsByTableAndDate(Integer tableId, LocalDate date);
+
+    List<Reservation> findReservationsByDateAndTime( LocalDate date, ReservationTime reservationTime);
 }

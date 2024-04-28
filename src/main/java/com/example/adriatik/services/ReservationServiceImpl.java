@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -39,11 +41,11 @@ public class ReservationServiceImpl implements ReservationService {
         Tables table = tablesRepository.findById(reservationPayload.getTableId())
                 .orElseThrow(() -> new IllegalArgumentException("No table found with id: " + reservationPayload.getTableId()));
 
-        ReservationTime reservationTime = reservationTimeRepository.findById(reservationPayload.getReservationTime())
+        ReservationTime reservationTime = reservationTimeRepository.findById(Integer.valueOf(reservationPayload.getReservationTime()))
                 .orElseThrow(() -> new IllegalArgumentException("No reservation time found with id: " + reservationPayload.getReservationTime()));
 
-        if (reservationRepository.existsByTableAndReservationTime(table, reservationTime)) {
-            throw new IllegalArgumentException("Table is already reserved at the chosen time.");
+        if (reservationRepository.existsByTableAndReservationTimeAndReservationDate(table, reservationTime, reservationPayload.getReservationDate())) {
+            throw new IllegalArgumentException("Table is already reserved at the chosen time on the selected date.");
         }
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -101,11 +103,11 @@ public class ReservationServiceImpl implements ReservationService {
         Tables table = tablesRepository.findById(reservationPayload.getTableId())
                 .orElseThrow(() -> new IllegalArgumentException("No table found with id: " + reservationPayload.getTableId()));
 
-        ReservationTime reservationTime = reservationTimeRepository.findById(reservationPayload.getReservationTime())
+        ReservationTime reservationTime = reservationTimeRepository.findById(Integer.valueOf(reservationPayload.getReservationTime()))
                 .orElseThrow(() -> new IllegalArgumentException("No reservation time found with id: " + reservationPayload.getReservationTime()));
 
-        if (reservationRepository.existsByTableAndReservationTime(table, reservationTime)) {
-            throw new IllegalArgumentException("Table is already reserved at the chosen time.");
+        if (reservationRepository.existsByTableAndReservationTimeAndReservationDate(table, reservationTime, reservationPayload.getReservationDate())) {
+            throw new IllegalArgumentException("Table is already reserved at the chosen time on the selected date.");
         }
 
         reservation.setTable(table);
@@ -113,6 +115,14 @@ public class ReservationServiceImpl implements ReservationService {
         reservation.setReservationDate(reservationPayload.getReservationDate());
 
         reservationRepository.save(reservation);
+    }
+    @Override
+    public List<Reservation> findReservationsByDateAndTime( LocalDate date, ReservationTime reservationTime) {
+        // Convert the time string to LocalTime
+
+
+        // Query the database for reservations for the selected table, date, and time
+        return reservationRepository.findByReservationDateAndReservationTime(date, reservationTime);
     }
 
 

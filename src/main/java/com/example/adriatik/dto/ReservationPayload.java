@@ -18,7 +18,7 @@ public class ReservationPayload {
     private Integer userId;
     private Integer tableId;
     private LocalDate reservationDate;
-    private Integer reservationTime;
+    private String reservationTime;
 
 
 

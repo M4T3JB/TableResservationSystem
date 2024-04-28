@@ -18,8 +18,12 @@ import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.security.Principal;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/client")
@@ -27,6 +31,7 @@ public class ClientController {
 
 
     private final ReservationService reservationService;
+    private static final Logger logger = LoggerFactory.getLogger(ClientController.class);
 
     @Autowired
     private TablesRepository tablesRepository;
@@ -91,16 +96,24 @@ public class ClientController {
         return "reservation/viewReservation";
     }
 
-    @GetMapping("/getReservedTimes")
+    @GetMapping("/getReservedTables")
     @ResponseBody
-    public List<String> getReservedTimes(@RequestParam("tableId") Integer tableId, @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        // Query the database for reservations for the selected table and date
-        List<Reservation> reservations = reservationService.findReservationsByTableAndDate(tableId, date);
+    public Map<String, List<Tables>> getReservedTables(@RequestParam("date") LocalDate date, @RequestParam("time") ReservationTime reservationTime) {
+        logger.info("getReservedTables called with date: {} and time: {}", date, reservationTime);
 
-        // Extract the times from the reservations and return them
-        return reservations.stream()
-                .map(reservation -> reservation.getReservationTime().getTime())
+
+        List<Reservation> reservations = reservationService.findReservationsByDateAndTime(date, reservationTime);
+
+        // Extract the tables from the reservations
+        List<Tables> reservedTables = reservations.stream()
+                .map(Reservation::getTable)
                 .collect(Collectors.toList());
+
+        // Create a map to hold the reserved tables
+        Map<String, List<Tables>> response = new HashMap<>();
+        response.put("reservedTables", reservedTables);
+
+        return response;
     }
 
 
